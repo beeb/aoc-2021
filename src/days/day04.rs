@@ -83,9 +83,56 @@ impl Day for Day04 {
         sum * (*drawn.last().unwrap() as usize)
     }
 
-    type Output2 = String;
+    type Output2 = usize;
 
-    fn part_2(_input: &Self::Input) -> Self::Output2 {
-        unimplemented!("part_2")
+    fn part_2(input: &Self::Input) -> Self::Output2 {
+        let (draw, boards) = input;
+        let mut winning_rounds: Vec<usize> = vec![]; // for each board, which is the winning round
+        for j in 0..boards.len() {
+            for i in 1..=draw.len() {
+                let (drawn, _) = draw.split_at(i);
+                for row in boards[j] {
+                    if row.iter().all(|x| drawn.contains(x)) {
+                        // win
+                        winning_rounds.push(i);
+                        break;
+                    }
+                }
+                for k in 0..5 {
+                    let col: Vec<u8> = boards[j].iter().map(|x| x[k]).collect();
+                    if col.iter().all(|x| drawn.contains(x)) {
+                        // win
+                        winning_rounds.push(i);
+                        break;
+                    }
+                }
+                if winning_rounds.len() > j {
+                    break;
+                }
+            }
+            if winning_rounds.len() <= j {
+                winning_rounds.push(999);
+            }
+        }
+        let (argmax, winning_round) = winning_rounds
+            .iter()
+            .enumerate()
+            .max_by(|(_, value0), (_, value1)| value0.cmp(value1))
+            .unwrap();
+        let win = boards[argmax];
+        let (drawn, _) = draw.split_at(*winning_round);
+        let sum = win
+            .to_vec()
+            .iter()
+            .map(|x| x.to_vec())
+            .collect::<Vec<_>>()
+            .iter()
+            .flatten()
+            .fold(0usize, |acc, x| match drawn.contains(x) {
+                true => acc,
+                false => acc + *x as usize,
+            });
+        println!("{sum} {}", drawn.len());
+        sum * (*drawn.last().unwrap() as usize)
     }
 }
