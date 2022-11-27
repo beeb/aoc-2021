@@ -1,4 +1,3 @@
-use itertools::enumerate;
 use nom::{
     character::complete::{newline, u32},
     multi::separated_list0,
