@@ -20,6 +20,22 @@ fn parse_grid(input: &str) -> IResult<&str, [[u8; 5]; 5]> {
     Ok((rest, grid.try_into().unwrap()))
 }
 
+/// calculate the sum of all numbers on the board which were not drawn and multiply with last drawn number
+fn calculate_score(board: [[u8; 5]; 5], drawn: Vec<u8>) -> usize {
+    let sum = board
+        .to_vec()
+        .iter()
+        .map(|x| x.to_vec())
+        .collect::<Vec<_>>()
+        .iter()
+        .flatten()
+        .fold(0usize, |acc, x| match drawn.contains(x) {
+            true => acc,
+            false => acc + *x as usize,
+        });
+    sum * (*drawn.last().unwrap() as usize)
+}
+
 impl Day for Day04 {
     type Input = (Vec<u8>, Vec<[[u8; 5]; 5]>);
 
@@ -33,54 +49,47 @@ impl Day for Day04 {
 
     fn part_1(input: &Self::Input) -> Self::Output1 {
         let (draw, boards) = input;
-        let mut winner: Option<usize> = None;
-        let mut final_drawn: Option<Vec<u8>> = None;
+        let mut winner: Option<usize> = None; // which board is the first winner
+        let mut winning_round: Option<usize> = None; // what was the winning round
+
+        // draw each number
         for i in 1..=draw.len() {
+            // check if board if we have a win
             for j in 0..boards.len() {
                 let (drawn, _) = draw.split_at(i);
+                // check rows first
                 for row in boards[j] {
                     if row.iter().all(|x| drawn.contains(x)) {
                         winner = Some(j);
-                        final_drawn = Some(drawn.to_vec());
+                        winning_round = Some(i);
                         break;
                     }
                 }
+                // then check cols
                 for k in 0..5 {
                     let col: Vec<u8> = boards[j].iter().map(|x| x[k]).collect();
                     if col.iter().all(|x| drawn.contains(x)) {
                         winner = Some(j);
-                        final_drawn = Some(drawn.to_vec());
+                        winning_round = Some(i);
                         break;
                     }
                 }
+                // if we have a winner we can break out of the loop early
                 if winner.is_some() {
                     break;
                 }
             }
+            // break early if we have found the winner
             if winner.is_some() {
                 break;
             }
         }
-        if winner.is_none() {
-            panic!("Could not find a winning board");
-        }
-        let win = boards[winner.unwrap()];
-        let drawn = final_drawn.unwrap();
+        assert!(winner.is_some());
+        let win = boards[winner.unwrap()]; // board that wins first
+        let (drawn, _) = draw.split_at(winning_round.unwrap()); // which numbers were drawn
         println!("{:?}", win);
         println!("{:?}", drawn);
-        let sum = win
-            .to_vec()
-            .iter()
-            .map(|x| x.to_vec())
-            .collect::<Vec<_>>()
-            .iter()
-            .flatten()
-            .fold(0usize, |acc, x| match drawn.contains(x) {
-                true => acc,
-                false => acc + *x as usize,
-            });
-        println!("{sum}");
-        sum * (*drawn.last().unwrap() as usize)
+        calculate_score(win, drawn.to_vec())
     }
 
     type Output2 = usize;
@@ -91,6 +100,7 @@ impl Day for Day04 {
         for j in 0..boards.len() {
             for i in 1..=draw.len() {
                 let (drawn, _) = draw.split_at(i);
+                // check rows first
                 for row in boards[j] {
                     if row.iter().all(|x| drawn.contains(x)) {
                         // win
@@ -98,6 +108,7 @@ impl Day for Day04 {
                         break;
                     }
                 }
+                // then check columns
                 for k in 0..5 {
                     let col: Vec<u8> = boards[j].iter().map(|x| x[k]).collect();
                     if col.iter().all(|x| drawn.contains(x)) {
@@ -107,32 +118,24 @@ impl Day for Day04 {
                     }
                 }
                 if winning_rounds.len() > j {
+                    // if we found the winning round for this board, we can break to proceed to the next board
                     break;
                 }
             }
             if winning_rounds.len() <= j {
+                // in case there was no winning round, save a sentinel value
                 winning_rounds.push(999);
             }
         }
+        assert!(winning_rounds.len() == boards.len());
+        // get the position of the maximum value, so which board wins last
         let (argmax, winning_round) = winning_rounds
             .iter()
             .enumerate()
             .max_by(|(_, value0), (_, value1)| value0.cmp(value1))
             .unwrap();
-        let win = boards[argmax];
+        let win_last = boards[argmax]; // this board wins last
         let (drawn, _) = draw.split_at(*winning_round);
-        let sum = win
-            .to_vec()
-            .iter()
-            .map(|x| x.to_vec())
-            .collect::<Vec<_>>()
-            .iter()
-            .flatten()
-            .fold(0usize, |acc, x| match drawn.contains(x) {
-                true => acc,
-                false => acc + *x as usize,
-            });
-        println!("{sum} {}", drawn.len());
-        sum * (*drawn.last().unwrap() as usize)
+        calculate_score(win_last, drawn.to_vec())
     }
 }
