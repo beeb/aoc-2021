@@ -34,7 +34,7 @@ impl Day for Day01 {
 
     fn part_2(input: &Self::Input) -> Self::Output2 {
         let mut count: usize = 0;
-        let mut previous_sum = 0usize;
+        let mut previous_sum: usize = 0;
         let mut first_meas = &input[0];
         let mut second_meas = &input[1];
         for (i, val) in enumerate(input) {
