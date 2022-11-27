@@ -13,6 +13,16 @@ pub struct Day03;
 
 const BITS: usize = 12;
 
+fn vec_to_uint(bits: &Vec<Vec<bool>>) -> usize {
+    bits.iter()
+        .flatten()
+        .enumerate()
+        .fold(0, |acc, (i, b)| match b {
+            true => acc | 1 << BITS - 1 - i,
+            false => acc,
+        })
+}
+
 impl Day for Day03 {
     type Input = Vec<Vec<bool>>;
 
@@ -29,7 +39,6 @@ impl Day for Day03 {
     type Output1 = usize;
 
     fn part_1(input: &Self::Input) -> Self::Output1 {
-        let majority = input.len() / 2;
         let mut input_iters: Vec<_> = input.iter().map(|entry| entry.iter()).collect();
         let transpose: Vec<Vec<_>> = (0..input[0].len())
             .map(|_| {
@@ -44,19 +53,53 @@ impl Day for Day03 {
         let mut epsilon: usize = 0;
         for (i, pos) in enumerate(transpose) {
             let ones: usize = pos.iter().fold(0, |acc, x| acc + **x as usize);
-            if ones >= majority {
+            let zeroes = input.len() - ones;
+            if ones >= zeroes {
                 gamma = gamma | 1 << BITS - 1 - i;
             } else {
                 epsilon = epsilon | 1 << BITS - 1 - i;
             }
         }
-        println!("{gamma:12b}\n{epsilon:12b}");
         gamma * epsilon
     }
 
-    type Output2 = String;
+    type Output2 = usize;
 
-    fn part_2(_input: &Self::Input) -> Self::Output2 {
-        unimplemented!("part_2")
+    fn part_2(input: &Self::Input) -> Self::Output2 {
+        let mut res_oxy = input.clone();
+        let mut res_co2 = input.clone();
+        for i in 0..BITS {
+            let items_left = res_oxy.len();
+            // get all the bits at position i
+            let pos: Vec<_> = res_oxy.iter().map(|entry| entry.get(i).unwrap()).collect();
+            // find the number of ones
+            let ones: usize = pos.iter().fold(0, |acc, x| acc + **x as usize);
+            let zeroes = items_left - ones;
+            res_oxy = res_oxy
+                .into_iter()
+                .filter(|entry| entry[i] == (ones >= zeroes))
+                .collect();
+            if res_oxy.len() <= 1 {
+                break;
+            }
+        }
+        for i in 0..BITS {
+            let items_left = res_co2.len();
+            // get all the bits at position i
+            let pos: Vec<_> = res_co2.iter().map(|entry| entry.get(i).unwrap()).collect();
+            // find the number of ones
+            let ones: usize = pos.iter().fold(0, |acc, x| acc + **x as usize);
+            let zeroes = items_left - ones;
+            res_co2 = res_co2
+                .into_iter()
+                .filter(|entry| entry[i] == (ones < zeroes))
+                .collect();
+            if res_co2.len() <= 1 {
+                break;
+            }
+        }
+        let oxy = vec_to_uint(&res_oxy);
+        let co2 = vec_to_uint(&res_co2);
+        oxy * co2
     }
 }
