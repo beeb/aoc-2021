@@ -20,12 +20,10 @@ impl Day for Day01 {
 
     fn part_1(input: &Self::Input) -> Self::Output1 {
         let mut count: usize = 0;
-        let mut previous = &input[0];
-        for val in input.split_at(1).1 {
-            if val > previous {
+        for i in 1..input.len() {
+            if input[i] > input[i - 1] {
                 count += 1;
             }
-            previous = val;
         }
         count
     }
@@ -34,28 +32,13 @@ impl Day for Day01 {
 
     fn part_2(input: &Self::Input) -> Self::Output2 {
         let mut count: usize = 0;
-        let mut previous_sum: usize = 0;
-        let mut first_meas = &input[0];
-        let mut second_meas = &input[1];
-        for (i, val) in enumerate(input) {
-            match i {
-                0 => {}
-                1 => {}
-                2 => {
-                    previous_sum = (first_meas + second_meas + val) as usize;
-                    first_meas = second_meas;
-                    second_meas = val;
-                }
-                _ => {
-                    let sum = (first_meas + second_meas + val) as usize;
-                    if previous_sum < sum {
-                        count += 1;
-                    }
-                    first_meas = second_meas;
-                    second_meas = val;
-                    previous_sum = sum;
-                }
-            };
+        let mut sums = vec![];
+        for i in 1..input.len() - 1 {
+            let sum = input[i - 1] + input[i] + input[i + 1];
+            if sums.len() > 0 && sum > sums[sums.len() - 1] {
+                count += 1;
+            }
+            sums.push(sum);
         }
         count
     }
