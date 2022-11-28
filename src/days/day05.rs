@@ -35,17 +35,19 @@ impl Line {
     fn is_point_on_line(&self, point: Point) -> bool {
         if self.start.x == self.end.x {
             // horizontal line
-            let start = min(self.start.x, self.end.x);
-            let end = max(self.start.x, self.end.x);
-            return point.x >= start && point.x <= end;
-        } else if self.start.y == self.end.y {
-            // vertical line
             let start = min(self.start.y, self.end.y);
             let end = max(self.start.y, self.end.y);
-            return point.y >= start && point.y <= end;
+            return point.x == self.start.x && point.y >= start && point.y <= end;
+        } else if self.start.y == self.end.y {
+            // vertical line
+            let start = min(self.start.x, self.end.x);
+            let end = max(self.start.x, self.end.x);
+            return point.y == self.start.y && point.x >= start && point.x <= end;
         } else {
             // diagonal line
-            false // TODO
+            let pos_x = (point.x as isize - self.start.x as isize).abs();
+            let pos_y = (point.y as isize - self.start.y as isize).abs();
+            pos_x == pos_y
         }
     }
 }
@@ -140,7 +142,8 @@ impl Day for Day05 {
                     end_y = line.end.y;
                 }
                 for j in start_y..=end_y {
-                    if line.is_vertical_horizontal() || i - start_x == j - start_y {
+                    // here we iterate over the whole square or rectangle containing the line
+                    if line.is_point_on_line(Point { x: i, y: j }) {
                         grid[i][j] += 1;
                     }
                 }
