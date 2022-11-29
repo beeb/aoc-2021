@@ -1,5 +1,7 @@
+use std::collections::HashMap;
+
 use nom::{
-    character::complete::{char, u64},
+    character::complete::{char, u8},
     multi::separated_list0,
     IResult,
 };
@@ -8,17 +10,37 @@ use crate::days::Day;
 
 pub struct Day06;
 
+fn run(input: &<Day06 as Day>::Input, days: usize) -> usize {
+    let mut histogram: HashMap<u8, usize> = (0..=8).map(|x| (x, 0)).collect();
+    for fish in input {
+        histogram.entry(*fish).and_modify(|e| *e += 1);
+    }
+    for _ in 0..days {
+        // first, check how many fishes are at timer 0, which means we need to create new offsprings
+        let ready = histogram[&0];
+        // now, decrease the count (move them) for each fish
+        for timer in 1..=8 {
+            histogram.insert(timer - 1, histogram[&timer]);
+        }
+        // now we need to move the fishes that reached zero back to 6 (there can be existing 6's)
+        histogram.entry(6).and_modify(|e| *e += ready);
+        // and create the new offsprings (there are no 8's left)
+        histogram.insert(8, ready);
+    }
+    histogram.values().sum()
+}
+
 impl Day for Day06 {
-    type Input = Vec<u64>;
+    type Input = Vec<u8>;
 
     fn parse(input: &str) -> IResult<&str, Self::Input> {
-        separated_list0(char(','), u64)(input)
+        separated_list0(char(','), u8)(input)
     }
 
-    type Output1 = u64;
+    type Output1 = usize;
 
     fn part_1(input: &Self::Input) -> Self::Output1 {
-        let mut fish = input.clone();
+        let mut fish: Vec<u8> = input.clone();
         for _ in 1..=80 {
             for i in 0..fish.len() {
                 fish[i] = match fish[i] {
@@ -31,36 +53,12 @@ impl Day for Day06 {
             }
         }
         println!("{}", fish.len());
-        let mut counter: u64 = 0;
-        for fish in input {
-            counter += total_count(*fish, 80);
-        }
-        counter
+        run(input, 80)
     }
 
-    type Output2 = u64;
+    type Output2 = usize;
 
     fn part_2(input: &Self::Input) -> Self::Output2 {
-        // for each fish, how many offsprings will it have after x days?
-        // it starts making offsprings after timer days
-        // so it produces offsprings for (x - timer) days
-        // so for a given fish, ceil((x - timer) / 7) is the number of offsprings
-        // and this is recursive, so for each of those offsprings, they also will generate ceil((y - timer) / 7)
-        // offsprings, where y is the remaining days (x - initial_parent_timer - 1) when they were spawned and
-        // timer is 8 for them
-        let mut counter: u64 = 0;
-        for fish in input {
-            counter += total_count(*fish, 256);
-        }
-        counter
+        run(input, 256)
     }
-}
-
-fn total_count(fish_counter: u64, days_left: u64) -> u64 {
-    let mut total: u64 = 1;
-    let num_descendants = ((days_left - fish_counter) + 7 - 1) / 7; // ceil division
-    for _ in 0..num_descendants {
-        total += total_count(7, days_left - fish_counter - 1);
-    }
-    total
 }
