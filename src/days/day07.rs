@@ -97,6 +97,7 @@ impl Day for Day07 {
         let mut fib = MemoizedFib::new();
         let mut pos = median(&input);
         let mut last = fib.fuel_spent(&input, pos);
+        // brute force, only works if the optimum is higher than the median
         loop {
             let new = fib.fuel_spent(&input, pos + 1);
             if new > last {
