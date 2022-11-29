@@ -38,11 +38,11 @@ fn fuel_spent_part1(input: &<Day07 as Day>::Input, pos: u64) -> u64 {
         .sum()
 }
 
-struct MemoizedFib {
+struct MemoizedSeq {
     pub mem: HashMap<u64, u64>,
 }
 
-impl MemoizedFib {
+impl MemoizedSeq {
     fn new() -> Self {
         Self {
             mem: HashMap::new(),
@@ -95,7 +95,7 @@ impl Day for Day07 {
     type Output2 = u64;
 
     fn part_2(input: &Self::Input) -> Self::Output2 {
-        let mut fib = MemoizedFib::new();
+        let mut fib = MemoizedSeq::new();
         let mut pos = median(&input);
         let mut last = fib.fuel_spent(&input, pos);
         // brute force, only works if the optimum is higher than the median
