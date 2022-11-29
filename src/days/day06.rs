@@ -40,6 +40,7 @@ impl Day for Day06 {
     type Output1 = usize;
 
     fn part_1(input: &Self::Input) -> Self::Output1 {
+        // naive solution, keeping track of all the fishes individually
         let mut fish: Vec<u8> = input.clone();
         for _ in 1..=80 {
             for i in 0..fish.len() {
@@ -53,6 +54,7 @@ impl Day for Day06 {
             }
         }
         println!("{}", fish.len());
+        // smart solution
         run(input, 80)
     }
 
