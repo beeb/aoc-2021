@@ -87,6 +87,7 @@ impl Day for Day07 {
 
     fn part_1(input: &Self::Input) -> Self::Output1 {
         let pos = median(&input);
+        println!("{}", pos);
         // get the fuel spent to go to that position for each crab submarine
         fuel_spent_part1(&input, pos)
     }
