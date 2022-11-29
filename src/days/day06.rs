@@ -11,6 +11,7 @@ use crate::days::Day;
 pub struct Day06;
 
 fn run(input: &<Day06 as Day>::Input, days: usize) -> usize {
+    // we keep a histogram of how many fishes have each timer value between 0 and 8
     let mut histogram: HashMap<u8, usize> = (0..=8).map(|x| (x, 0)).collect();
     for fish in input {
         histogram.entry(*fish).and_modify(|e| *e += 1);
