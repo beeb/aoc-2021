@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use itertools::Itertools;
 use nom::{
     bytes::complete::tag,
@@ -62,9 +64,39 @@ impl Day for Day08 {
         count
     }
 
-    type Output2 = String;
+    type Output2 = usize;
 
     fn part_2(_input: &Self::Input) -> Self::Output2 {
-        unimplemented!("part_2")
+        /*
+        Segments appearance:
+        a -> 0,    2, 3,    5, 6, 7, 8, 9
+        b -> 0,          4, 5, 6,    8, 9
+        c -> 0, 1, 2, 3, 4,       7, 8, 9
+        d ->       2, 3, 4, 5, 6,    8, 9
+        e -> 0,    2,          6,    8
+        f -> 0, 1,    3, 4, 5, 6, 7, 8, 9
+        g -> 0,    2, 3,    5, 6,    8, 9
+
+        a = 1011011111
+        b = 1000111011
+        c = 1111100111
+        d = 0011111011
+        e = 1010001010
+        f = 1101111111
+        g = 1011011011
+        */
+        let fingerprints: HashMap<u16, char> = [
+            (0b1011011111u16, 'a'),
+            (0b1000111011u16, 'b'),
+            (0b1111100111u16, 'c'),
+            (0b0011111011u16, 'd'),
+            (0b1010001010u16, 'e'),
+            (0b1101111111u16, 'f'),
+            (0b1011011011u16, 'g'),
+        ]
+        .iter()
+        .cloned()
+        .collect();
+        0
     }
 }
