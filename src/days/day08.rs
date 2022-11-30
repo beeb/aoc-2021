@@ -92,30 +92,30 @@ impl Day for Day08 {
             let mut corresp: HashMap<char, char> = HashMap::new();
             let mut dg: Vec<char> = vec![];
             let mut ac: Vec<char> = vec![];
-            for wrong_char in 'a'..='g' {
-                match counts[&wrong_char] {
+            for unknown_char in 'a'..='g' {
+                match counts[&unknown_char] {
                     4 => {
-                        corresp.insert(wrong_char, 'e');
+                        corresp.insert(unknown_char, 'e');
                     }
                     6 => {
-                        corresp.insert(wrong_char, 'b');
+                        corresp.insert(unknown_char, 'b');
                     }
                     9 => {
-                        corresp.insert(wrong_char, 'f');
+                        corresp.insert(unknown_char, 'f');
                     }
                     7 => {
                         // can be either 'd' or 'g'
-                        dg.push(wrong_char);
+                        dg.push(unknown_char);
                     }
                     8 => {
                         // can be either 'a' or 'c'
-                        ac.push(wrong_char);
+                        ac.push(unknown_char);
                     }
                     _ => {}
                 }
             }
-            // from part 1: 'g' only appears in digit 8, so it's present in digit 4, it's 'd'
-            // from part 1: 'c' appears in all 4 unique digits, so if count is 4 then it's 'c'
+            // from part 1: 'g' only appears in digit 8, so if unknown char is present in digit 4, it's 'd'
+            // from part 1: 'c' appears in all 4 unique digits, so if count of unknown char is 4, then it's 'c'
             let count_dg: u8 = item
                 .observations
                 .iter()
