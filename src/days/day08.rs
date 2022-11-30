@@ -129,8 +129,9 @@ impl Day for Day08 {
                     _ => {}
                 }
             }
-            // from part 1: 'g' only appears in digit 8, so if unknown char is present in digit 4, it's 'd'
-            // from part 1: 'c' appears in all 4 unique digits, so if count of unknown char is 4, then it's 'c'
+            // from unique length digits:
+            //  - 'g' only appears in digit 8, so if unknown char is present in digit 4, it's 'd'
+            //  - 'c' appears in all 4 unique digits, so if count of unknown char is 4, then it's 'c'
             let count_dg: u8 = item
                 .observations
                 .iter()
