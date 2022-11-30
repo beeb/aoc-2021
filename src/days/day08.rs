@@ -145,10 +145,11 @@ impl Day for Day08 {
 
             // we now have the correspondance
             let mut value: usize = 0;
+            let digits = item.digits.len();
             for (i, d) in item.digits.iter().enumerate() {
                 let decoded = d.chars().map(|c| corresp[&c]).sorted().collect::<String>();
                 let digit = segments_to_digit.get(&decoded).expect("has to be");
-                value += digit * 10usize.pow(3 - i as u32);
+                value += digit * 10usize.pow((digits - 1 - i) as u32);
             }
             total += value;
         }
