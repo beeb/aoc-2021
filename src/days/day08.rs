@@ -22,15 +22,9 @@ pub struct Item {
 
 fn parse_line(input: &str) -> IResult<&str, Item> {
     let (rest, (observations, _, digits)) = tuple((
-        separated_list0(
-            space1,
-            map(alpha1, |s: &str| s.chars().sorted().collect::<String>()),
-        ),
+        separated_list0(space1, map(alpha1, |s: &str| s.to_string())),
         tag(" | "),
-        separated_list0(
-            space1,
-            map(alpha1, |s: &str| s.chars().sorted().collect::<String>()),
-        ),
+        separated_list0(space1, map(alpha1, |s: &str| s.to_string())),
     ))(input)?;
     Ok((
         rest,
