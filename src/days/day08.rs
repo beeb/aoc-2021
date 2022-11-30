@@ -35,6 +35,21 @@ fn parse_line(input: &str) -> IResult<&str, Item> {
     ))
 }
 
+fn digits_to_value(
+    digits: &Vec<String>,
+    corresp: &HashMap<char, char>,
+    segments_to_digit: &HashMap<String, usize>,
+) -> usize {
+    let mut value: usize = 0;
+    let len = digits.len();
+    for (i, d) in digits.iter().enumerate() {
+        let decoded = d.chars().map(|c| corresp[&c]).sorted().collect::<String>();
+        let digit = segments_to_digit.get(&decoded).expect("has to be");
+        value += digit * 10usize.pow((len - 1 - i) as u32);
+    }
+    value
+}
+
 impl Day for Day08 {
     type Input = Vec<Item>;
 
@@ -144,14 +159,7 @@ impl Day for Day08 {
             }
 
             // we now have the correspondance
-            let mut value: usize = 0;
-            let digits = item.digits.len();
-            for (i, d) in item.digits.iter().enumerate() {
-                let decoded = d.chars().map(|c| corresp[&c]).sorted().collect::<String>();
-                let digit = segments_to_digit.get(&decoded).expect("has to be");
-                value += digit * 10usize.pow((digits - 1 - i) as u32);
-            }
-            total += value;
+            total += digits_to_value(&item.digits, &corresp, &segments_to_digit);
         }
         total
     }
