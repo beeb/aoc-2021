@@ -49,8 +49,17 @@ impl Day for Day08 {
     type Output1 = usize;
 
     fn part_1(input: &Self::Input) -> Self::Output1 {
-        println!("{:?}", input);
-        0
+        let count: usize = input.iter().fold(0, |acc, i| {
+            let mut count: usize = 0;
+            for d in &i.digits {
+                let len = d.len();
+                if len == 2 || len == 3 || len == 4 || len == 7 {
+                    count += 1;
+                }
+            }
+            acc + count
+        });
+        count
     }
 
     type Output2 = String;
