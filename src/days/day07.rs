@@ -22,7 +22,7 @@ fn median(input: &<Day07 as Day>::Input) -> u64 {
             let right = input[input.len() / 2];
             (left + right) / 2
         }
-        _ => input[(input.len() / 2)],
+        _ => input[input.len() / 2],
     }
 }
 
@@ -86,21 +86,21 @@ impl Day for Day07 {
     type Output1 = u64;
 
     fn part_1(input: &Self::Input) -> Self::Output1 {
-        let pos = median(&input);
+        let pos = median(input);
         println!("{}", pos);
         // get the fuel spent to go to that position for each crab submarine
-        fuel_spent_part1(&input, pos)
+        fuel_spent_part1(input, pos)
     }
 
     type Output2 = u64;
 
     fn part_2(input: &Self::Input) -> Self::Output2 {
         let mut fib = MemoizedSeq::new();
-        let mut pos = median(&input);
-        let mut last = fib.fuel_spent(&input, pos);
+        let mut pos = median(input);
+        let mut last = fib.fuel_spent(input, pos);
         // brute force, only works if the optimum is higher than the median
         loop {
-            let new = fib.fuel_spent(&input, pos + 1);
+            let new = fib.fuel_spent(input, pos + 1);
             if new > last {
                 break;
             }

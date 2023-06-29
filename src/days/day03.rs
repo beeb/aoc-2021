@@ -13,12 +13,12 @@ pub struct Day03;
 
 const BITS: usize = 12;
 
-fn vec_to_uint(bits: &Vec<Vec<bool>>) -> usize {
+fn vec_to_uint(bits: &[Vec<bool>]) -> usize {
     bits.iter()
         .flatten()
         .enumerate()
         .fold(0, |acc, (i, b)| match b {
-            true => acc | 1 << BITS - 1 - i,
+            true => acc | 1 << (BITS - 1 - i),
             false => acc,
         })
 }
@@ -55,9 +55,9 @@ impl Day for Day03 {
             let ones: usize = pos.iter().fold(0, |acc, x| acc + **x as usize);
             let zeroes = input.len() - ones;
             if ones >= zeroes {
-                gamma = gamma | 1 << BITS - 1 - i;
+                gamma |= 1 << (BITS - 1 - i);
             } else {
-                epsilon = epsilon | 1 << BITS - 1 - i;
+                epsilon |= 1 << (BITS - 1 - i);
             }
         }
         gamma * epsilon
@@ -75,10 +75,7 @@ impl Day for Day03 {
             // find the number of ones
             let ones: usize = pos.iter().fold(0, |acc, x| acc + **x as usize);
             let zeroes = items_left - ones;
-            res_oxy = res_oxy
-                .into_iter()
-                .filter(|entry| entry[i] == (ones >= zeroes))
-                .collect();
+            res_oxy.retain(|entry| entry[i] == (ones >= zeroes));
             if res_oxy.len() <= 1 {
                 break;
             }
@@ -90,10 +87,7 @@ impl Day for Day03 {
             // find the number of ones
             let ones: usize = pos.iter().fold(0, |acc, x| acc + **x as usize);
             let zeroes = items_left - ones;
-            res_co2 = res_co2
-                .into_iter()
-                .filter(|entry| entry[i] == (ones < zeroes))
-                .collect();
+            res_co2.retain(|entry| entry[i] == (ones < zeroes));
             if res_co2.len() <= 1 {
                 break;
             }

@@ -34,7 +34,7 @@ impl Day for Day01 {
         let mut sums = vec![];
         for i in 1..input.len() - 1 {
             let sum = input[i - 1] + input[i] + input[i + 1];
-            if sums.len() > 0 && sum > sums[sums.len() - 1] {
+            if !sums.is_empty() && sum > sums[sums.len() - 1] {
                 count += 1;
             }
             sums.push(sum);

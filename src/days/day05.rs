@@ -29,7 +29,7 @@ pub struct Line {
 
 impl Line {
     fn is_vertical_horizontal(&self) -> bool {
-        return self.start.x == self.end.x || self.start.y == self.end.y;
+        self.start.x == self.end.x || self.start.y == self.end.y
     }
 
     fn is_point_on_line(&self, point: Point) -> bool {
@@ -37,7 +37,7 @@ impl Line {
             // horizontal line
             let start = min(self.start.y, self.end.y);
             let end = max(self.start.y, self.end.y);
-            return point.x == self.start.x && point.y >= start && point.y <= end;
+            point.x == self.start.x && point.y >= start && point.y <= end
         } else if self.start.y == self.end.y {
             // vertical line
             let start = min(self.start.x, self.end.x);
@@ -93,7 +93,7 @@ impl Day for Day05 {
                 start_x = line.start.x;
                 end_x = line.end.x;
             }
-            for i in start_x..=end_x {
+            for row in grid.iter_mut().take(end_x + 1).skip(start_x) {
                 if line.start.y > line.end.y {
                     start_y = line.end.y;
                     end_y = line.start.y;
@@ -101,8 +101,8 @@ impl Day for Day05 {
                     start_y = line.start.y;
                     end_y = line.end.y;
                 }
-                for j in start_y..=end_y {
-                    grid[i][j] += 1;
+                for cell in row.iter_mut().take(end_y + 1).skip(start_y) {
+                    *cell += 1;
                 }
             }
         }
@@ -133,6 +133,7 @@ impl Day for Day05 {
                 start_x = line.start.x;
                 end_x = line.end.x;
             }
+            #[allow(clippy::needless_range_loop)]
             for i in start_x..=end_x {
                 if line.start.y > line.end.y {
                     start_y = line.end.y;

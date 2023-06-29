@@ -2,13 +2,13 @@
 name = "aoc_2021"
 version = "0.1.0"
 edition = "2021"
-authors = ["Valentin Bersier <vbersier@gmail.com>"]
+authors = ["Valentin Bersier <hi@beeb.li>"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 nom = "7"
-itertools = "0.10"
+itertools = "0.11"
 clap = { version = "4", features = ["derive"] }
 chrono = "0.4"
 reqwest = { version = "0.11", features = ["blocking"] }

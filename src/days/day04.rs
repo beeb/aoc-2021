@@ -42,7 +42,7 @@ impl Day for Day04 {
     fn parse(input: &str) -> IResult<&str, Self::Input> {
         let (rest, (draw, _)) = pair(separated_list0(char(','), u8), count(newline, 2))(input)?;
         let (rest, boards) = separated_list0(many1(newline), parse_grid)(rest)?;
-        Ok((rest, (draw.try_into().unwrap(), boards.try_into().unwrap())))
+        Ok((rest, (draw, boards)))
     }
 
     type Output1 = usize;
@@ -55,10 +55,10 @@ impl Day for Day04 {
         // draw each number
         for i in 1..=draw.len() {
             // check if board if we have a win
-            for j in 0..boards.len() {
+            for (j, board) in boards.iter().enumerate() {
                 let (drawn, _) = draw.split_at(i);
                 // check rows first
-                for row in boards[j] {
+                for row in board {
                     if row.iter().all(|x| drawn.contains(x)) {
                         winner = Some(j);
                         winning_round = Some(i);
@@ -67,7 +67,7 @@ impl Day for Day04 {
                 }
                 // then check cols
                 for k in 0..5 {
-                    let col: Vec<u8> = boards[j].iter().map(|x| x[k]).collect();
+                    let col: Vec<u8> = board.iter().map(|x| x[k]).collect();
                     if col.iter().all(|x| drawn.contains(x)) {
                         winner = Some(j);
                         winning_round = Some(i);
@@ -97,11 +97,11 @@ impl Day for Day04 {
     fn part_2(input: &Self::Input) -> Self::Output2 {
         let (draw, boards) = input;
         let mut winning_rounds: Vec<usize> = vec![]; // for each board, which is the winning round
-        for j in 0..boards.len() {
+        for (j, board) in boards.iter().enumerate() {
             for i in 1..=draw.len() {
                 let (drawn, _) = draw.split_at(i);
                 // check rows first
-                for row in boards[j] {
+                for row in board {
                     if row.iter().all(|x| drawn.contains(x)) {
                         // win
                         winning_rounds.push(i);
@@ -110,7 +110,7 @@ impl Day for Day04 {
                 }
                 // then check columns
                 for k in 0..5 {
-                    let col: Vec<u8> = boards[j].iter().map(|x| x[k]).collect();
+                    let col: Vec<u8> = board.iter().map(|x| x[k]).collect();
                     if col.iter().all(|x| drawn.contains(x)) {
                         // win
                         winning_rounds.push(i);
